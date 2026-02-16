@@ -1,0 +1,7 @@
+{
+  "name": "Mahbere Kidist Kristos Semra Portal",
+  "description": "A comprehensive community management system for the Ethiopian Orthodox Church community, featuring attendance tracking, event coordination, food hosting schedules, and liturgical song management.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}

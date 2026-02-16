@@ -1,0 +1,98 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mahbere Kidist Kristos Semra Portal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --church-red: #7a0000;
+      --church-gold: #c5a059;
+      --church-green: #1e3a1e;
+      --parchment: #fcf9f1;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--parchment);
+      margin: 0;
+      padding: 0;
+    }
+    h1, h2, h3, h4, .font-serif {
+      font-family: 'Crimson Pro', serif;
+    }
+    
+    /* Global Saint Theme Background */
+    .saint-theme-wrapper {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background-color: var(--parchment);
+      overflow: hidden;
+    }
+
+    .saint-image-bg {
+      position: absolute;
+      inset: 0;
+      background-image: url('https://images.unsplash.com/photo-1548625361-12503d22934f?q=80&w=1920&auto=format&fit=crop');
+      background-size: cover;
+      background-position: center 20%;
+      opacity: 0.12;
+      filter: sepia(0.3) blur(1px);
+      transition: opacity 1s ease-in-out;
+    }
+
+    .parchment-overlay {
+      position: absolute;
+      inset: 0;
+      background-image: url("https://www.transparenttextures.com/patterns/natural-paper.png");
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    .sacred-vignette {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle, transparent 40%, rgba(30, 20, 10, 0.15) 100%);
+      pointer-events: none;
+    }
+
+    .geez-border {
+      border-image: linear-gradient(to right, #c5a059, #7a0000, #c5a059) 1;
+    }
+
+    /* Transitioning between pages */
+    .page-fade-enter {
+      opacity: 0;
+    }
+    .page-fade-enter-active {
+      opacity: 1;
+      transition: opacity 500ms ease-in;
+    }
+  </style>
+<script type="importmap">
+{
+  "imports": {
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "react": "https://esm.sh/react@^19.2.4",
+    "lucide-react": "https://esm.sh/lucide-react@^0.563.0",
+    "@google/genai": "https://esm.sh/@google/genai@^1.40.0"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body class="text-slate-900">
+  <!-- Global background elements that persist across all pages -->
+  <div class="saint-theme-wrapper">
+    <div class="saint-image-bg"></div>
+    <div class="sacred-vignette"></div>
+    <div class="parchment-overlay"></div>
+  </div>
+  <div id="root"></div>
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>
