@@ -1,7 +1,11 @@
 import { createClient } from '@supabase/supabase-js';
 
-// These names are special. Vite only "sees" variables that start with VITE_
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// This if-statement prevents the app from crashing if variables are missing
+if (!supabaseUrl || !supabaseAnonKey) {
+  console.error("Supabase credentials are missing! Check your .env file.");
+}
+
+export const supabase = createClient(supabaseUrl || '', supabaseAnonKey || '');
