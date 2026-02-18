@@ -1,6 +1,7 @@
-
 import React, { useState, useRef } from 'react';
 import { LogIn, User, Lock, AlertCircle } from 'lucide-react';
+// Import the supabase client you created in src/supabaseClient.ts
+import { supabase } from '../supabaseClient'; 
 
 interface LoginPageProps {
   onLogin: (username: string) => void;
@@ -10,32 +11,48 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
   
-  // Ref for the password input to allow focus jumping
   const passwordRef = useRef<HTMLInputElement>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setLoading(true);
 
     if (!username || !password) {
       setError("Please provide your name and the sacred key.");
+      setLoading(false);
       return;
     }
 
-    // Portal logic: In a real app we'd check a backend. 
-    // Here we just ensure the password is correct for the portal.
-    if (password === 'Portal@2024') {
-      onLogin(username);
-    } else {
-      setError("The Sacred Key provided is incorrect.");
+    try {
+      // This converts "Abebe" to "abebe@portal.com" to match our SQL members
+      const emailIdentity = `${username.toLowerCase().trim()}@portal.com`;
+
+      const { data, error: authError } = await supabase.auth.signInWithPassword({
+        email: emailIdentity,
+        password: password,
+      });
+
+      if (authError) {
+        // Friendly error for the members
+        setError("Identity or Sacred Key is incorrect. Please try again.");
+      } else if (data.user) {
+        // Success! Pass the original username to the app
+        onLogin(username);
+      }
+    } catch (err) {
+      setError("The Portal is currently unreachable. Check your connection.");
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleUsernameKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      e.preventDefault(); // Prevent form submission
-      passwordRef.current?.focus(); // Jump to password field
+      e.preventDefault();
+      passwordRef.current?.focus();
     }
   };
 
@@ -45,6 +62,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
       
       <div className="relative z-10 w-full max-w-lg mx-4">
         <div className="bg-[#fcf9f1]/95 backdrop-blur-md border-2 border-[#c5a059]/40 p-12 shadow-2xl relative overflow-hidden rounded-sm">
+          {/* Decorative Corners */}
           <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-[#7a0000]/20" />
           <div className="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-[#7a0000]/20" />
           <div className="absolute bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 border-[#7a0000]/20" />
@@ -78,8 +96,9 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 onKeyDown={handleUsernameKeyDown}
-                placeholder="Your Name (e.g. Dereje)"
+                placeholder="Your Name (e.g. Abebe)"
                 className="w-full bg-white border border-[#d6c7a1] py-4 px-6 focus:outline-none focus:border-[#7a0000] transition-all text-slate-800 placeholder:text-slate-300 font-serif"
+                disabled={loading}
                 autoFocus
               />
             </div>
@@ -95,15 +114,17 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Access Password"
                 className="w-full bg-white border border-[#d6c7a1] py-4 px-6 focus:outline-none focus:border-[#7a0000] transition-all text-slate-800 placeholder:text-slate-300 font-serif"
+                disabled={loading}
               />
             </div>
 
             <button
               type="submit"
-              className="w-full bg-[#7a0000] hover:bg-[#9a0000] text-white font-serif text-lg py-4 transition-all duration-300 shadow-xl border border-[#c5a059]/30 flex items-center justify-center gap-4 group mt-10 active:scale-95"
+              disabled={loading}
+              className={`w-full ${loading ? 'bg-slate-400' : 'bg-[#7a0000] hover:bg-[#9a0000]'} text-white font-serif text-lg py-4 transition-all duration-300 shadow-xl border border-[#c5a059]/30 flex items-center justify-center gap-4 group mt-10 active:scale-95 cursor-pointer`}
             >
               <LogIn size={20} />
-              Open Portal
+              {loading ? 'Verifying...' : 'Open Portal'}
             </button>
           </form>
 
